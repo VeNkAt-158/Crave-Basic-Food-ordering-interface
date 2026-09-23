@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Makes the website responsive on phones -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Crave - Food Ordering</title>
+
+    <style>
+        /* =========================
+           BASIC RESET
+        ========================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #fff8f0;
+            color: #222;
+        }
+
+
+        /* =========================
+           HEADER / RESTAURANT BANNER
+        ========================= */
+
+        header {
+            background: linear-gradient(135deg, #3b1608, #8b451f);
+            color: white;
+            padding: 70px 8%;
+        }
+
+        header h1 {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #f5d8c5;
+            max-width: 500px;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+        }
+
+        .hero-button {
+            display: inline-block;
+            text-decoration: none;
+            background: #ffb703;
+            color: #222;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           MAIN CONTENT
+        ========================= */
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 45px 5%;
+        }
+
+        .heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .heading h2 {
+            font-size: 2rem;
+        }
+
+
+        /* =========================
+           CART BUTTON
+        ========================= */
+
+        .cart-button {
+            border: none;
+            background: #222;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .cart-button:hover {
+            background: #444;
+        }
+
+
+        /* =========================
+           FOOD CATEGORIES
+        ========================= */
+
+        .categories {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        .category-button {
+            border: 1px solid #ddd;
+            background: white;
+            padding: 10px 17px;
+            border-radius: 50px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .category-button:hover,
+        .category-button.active {
+            background: #ffb703;
+            border-color: #ffb703;
+        }
+
+
+        /* =========================
+           FOOD CARDS
+        ========================= */
+
+        .food-grid {
+            display: grid;
+
+            /* 3 cards on larger screens */
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 25px;
+        }
+
+        .food-card {
+            background: white;
+            border: 1px solid #eadfd3;
+            border-radius: 18px;
+            overflow: hidden;
+
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+
+            transition: 0.3s;
+        }
+
+        /* Hover effect required by the recruitment brief */
+
+        .food-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+
+
+        /* Fake image area using emojis
+           You can replace this with actual <img> elements later */
+
+        .food-image {
+            height: 190px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background: #f7eadb;
+
+            font-size: 5rem;
+        }
+
+        .food-info {
+            padding: 20px;
+        }
+
+        .food-info h3 {
+            margin-bottom: 8px;
+        }
+
+        .food-info p {
+            color: #777;
+            line-height: 1.5;
+            min-height: 45px;
+        }
+
+        .food-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-top: 18px;
+        }
+
+        .price {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .add-button {
+            border: none;
+            background: #e85d04;
+            color: white;
+
+            padding: 10px 14px;
+            border-radius: 8px;
+
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .add-button:hover {
+            background: #c94e00;
+        }
+
+
+        /* =========================
+           CART PANEL
+        ========================= */
+
+        .cart {
+            position: fixed;
+
+            right: 20px;
+            bottom: 20px;
+
+            width: 380px;
+            max-width: calc(100% - 40px);
+
+            background: white;
+
+            border: 1px solid #ddd;
+            border-radius: 18px;
+
+            padding: 22px;
+
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+
+            /* Hidden by default */
+            transform: translateY(130%);
+
+            transition: 0.3s;
+
+            z-index: 100;
+        }
+
+        /* JavaScript adds this class */
+
+        .cart.open {
+            transform: translateY(0);
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 15px;
+        }
+
+        .close-button {
+            border: none;
+            background: none;
+
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           CART ITEMS
+        ========================= */
+
+        #cartItems {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 12px 0;
+
+            border-bottom: 1px solid #eee;
+        }
+
+        .quantity {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .quantity button {
+            width: 27px;
+            height: 27px;
+
+            border: 1px solid #ccc;
+            background: white;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+        }
+
+        .empty-cart {
+            text-align: center;
+            color: #777;
+            padding: 25px 0;
+        }
+
+
+        /* =========================
+           CART TOTAL
+        ========================= */
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+
+            margin-top: 20px;
+
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .checkout-button {
+            width: 100%;
+
+            margin-top: 15px;
+
+            padding: 13px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: #ffb703;
+
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .checkout-button:hover {
+            background: #f0a900;
+        }
+
+
+        /* =========================
+           RESPONSIVE DESIGN
+        ========================= */
+
+        /* Tablet */
+
+        @media (max-width: 850px) {
+
+            .food-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+
+        /* Mobile */
+
+        @media (max-width: 600px) {
+
+            header {
+                padding: 50px 6%;
+            }
+
+            header h1 {
+                font-size: 3rem;
+            }
+
+            .container {
+                padding: 35px 5%;
+            }
+
+            .food-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .heading {
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .cart {
+                right: 10px;
+                bottom: 10px;
+
+                width: calc(100% - 20px);
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         RESTAURANT BANNER
+    ========================= -->
+
+    <header>
+
+        <h1>CRAVE.</h1>
+
+        <p>
+            Fresh food, delicious flavours and simple ordering.
+            Pick your favourites and build your perfect meal.
+        </p>
+
+        <a href="#menu" class="hero-button">
+            Explore Menu
+        </a>
+
+    </header>
+
+
+
+    <!-- =========================
+         MAIN MENU
+    ========================= -->
+
+    <main class="container" id="menu">
+
+        <div class="heading">
+
+            <h2>Our Menu</h2>
+
+            <button class="cart-button" onclick="toggleCart()">
+
+                🛒 Cart
+
+                (<span id="cartCount">0</span>)
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =========================
+             CATEGORIES
+        ========================= -->
+
+        <div class="categories">
+
+            <button
+                class="category-button active"
+                onclick="filterFood('All', this)">
+                All
+            </button>
+
+            <button
+                class="category-button"
+                onclick="filterFood('Pizza', this)">
+                🍕 Pizza
+            </button>
+
+            <button
+                class="category-button"
+                onclick="filterFood('Burger', this)">
+                🍔 Burgers
+            </button>
+
+            <button
+                class="category-button"
+                onclick="filterFood('Drink', this)">
+                🥤 Drinks
+            </button>
+
+            <button
+                class="category-button"
+                onclick="filterFood('Dessert', this)">
+                🍰 Desserts
+            </button>
+
+        </div>
+
+
+
+        <!-- JavaScript will put food cards here -->
+
+        <div class="food-grid" id="foodMenu"></div>
+
+    </main>
+
+
+
+    <!-- =========================
+         CART
+    ========================= -->
+
+    <aside class="cart" id="cart">
+
+        <div class="cart-header">
+
+            <h2>Your Cart</h2>
+
+            <button
+                class="close-button"
+                onclick="toggleCart()">
+                ×
+            </button>
+
+        </div>
+
+
+        <!-- JavaScript puts cart items here -->
+
+        <div id="cartItems"></div>
+
+
+        <div class="cart-total">
+
+            <span>Total</span>
+
+            <span>
+                ₹<span id="total">0</span>
+            </span>
+
+        </div>
+
+
+        <button
+            class="checkout-button"
+            onclick="checkout()">
+
+            Place Order
+
+        </button>
+
+    </aside>
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+
+        /* ===================================
+           FOOD DATA
+
+           Each food item is an object.
+        =================================== */
+
+        const foods = [
+
+            {
+                id: 1,
+                name: "Margherita Pizza",
+                category: "Pizza",
+                price: 249,
+                emoji: "🍕",
+                description: "Classic tomato, mozzarella and basil."
+            },
+
+            {
+                id: 2,
+                name: "Farmhouse Pizza",
+                category: "Pizza",
+                price: 329,
+                emoji: "🍕",
+                description: "Fresh vegetables loaded with cheese."
+            },
+
+            {
+                id: 3,
+                name: "Classic Burger",
+                category: "Burger",
+                price: 179,
+                emoji: "🍔",
+                description: "Crispy patty with lettuce and tomato."
+            },
+
+            {
+                id: 4,
+                name: "Cheese Burger",
+                category: "Burger",
+                price: 219,
+                emoji: "🍔",
+                description: "Juicy burger with melted cheese."
+            },
+
+            {
+                id: 5,
+                name: "Cold Coffee",
+                category: "Drink",
+                price: 129,
+                emoji: "🥤",
+                description: "Cold creamy coffee with ice."
+            },
+
+            {
+                id: 6,
+                name: "Lemon Soda",
+                category: "Drink",
+                price: 89,
+                emoji: "🍋",
+                description: "Refreshing fizzy lemon drink."
+            },
+
+            {
+                id: 7,
+                name: "Chocolate Cake",
+                category: "Dessert",
+                price: 159,
+                emoji: "🍰",
+                description: "Soft chocolate cake with rich frosting."
+            },
+
+            {
+                id: 8,
+                name: "Ice Cream",
+                category: "Dessert",
+                price: 99,
+                emoji: "🍨",
+                description: "Creamy vanilla ice cream."
+            }
+
+        ];
+
+
+
+        /* ===================================
+           CART
+
+           Example:
+
+           cart = {
+               1: 2,
+               3: 1
+           }
+
+           means:
+           Pizza ID 1 → quantity 2
+           Burger ID 3 → quantity 1
+        =================================== */
+
+        let cart = {};
+
+
+
+        /* ===================================
+           DISPLAY FOOD
+
+           category = "All"
+           OR
+           category = "Pizza"
+        =================================== */
+
+        function renderMenu(category = "All") {
+
+            const menu = document.getElementById("foodMenu");
+
+
+            /* Filter food depending on category */
+
+            let items;
+
+            if (category === "All") {
+
+                items = foods;
+
+            } else {
+
+                items = foods.filter(function(food) {
+
+                    return food.category === category;
+
+                });
+
+            }
+
+
+            /* Create HTML for every food */
+
+            menu.innerHTML = items.map(function(food) {
+
+                return `
+
+                    <article class="food-card">
+
+                        <div class="food-image">
+                            ${food.emoji}
+                        </div>
+
+                        <div class="food-info">
+
+                            <h3>
+                                ${food.name}
+                            </h3>
+
+                            <p>
+                                ${food.description}
+                            </p>
+
+                            <div class="food-bottom">
+
+                                <span class="price">
+                                    ₹${food.price}
+                                </span>
+
+                                <button
+                                    class="add-button"
+                                    onclick="addToCart(${food.id})">
+
+                                    Add to Cart
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                `;
+
+            }).join("");
+
+        }
+
+
+
+        /* ===================================
+           ADD ITEM TO CART
+        =================================== */
+
+        function addToCart(id) {
+
+            /*
+                If item doesn't exist:
+                cart[id] = 1
+
+                If it already exists:
+                increase quantity
+            */
+
+            if (cart[id]) {
+
+                cart[id]++;
+
+            } else {
+
+                cart[id] = 1;
+
+            }
+
+
+            updateCart();
+
+        }
+
+
+
+        /* ===================================
+           CHANGE QUANTITY
+        =================================== */
+
+        function changeQuantity(id, amount) {
+
+            cart[id] += amount;
+
+
+            /* Remove item if quantity reaches 0 */
+
+            if (cart[id] <= 0) {
+
+                delete cart[id];
+
+            }
+
+
+            updateCart();
+
+        }
+
+
+
+        /* ===================================
+           UPDATE CART
+        =================================== */
+
+        function updateCart() {
+
+            const cartItems =
+                document.getElementById("cartItems");
+
+
+            const ids = Object.keys(cart);
+
+
+
+            /* If cart is empty */
+
+            if (ids.length === 0) {
+
+                cartItems.innerHTML = `
+
+                    <div class="empty-cart">
+                        Your cart is empty.
+                    </div>
+
+                `;
+
+            }
+
+
+            /* If cart has items */
+
+            else {
+
+                cartItems.innerHTML = ids.map(function(id) {
+
+                    const food =
+                        foods.find(function(item) {
+
+                            return item.id == id;
+
+                        });
+
+
+                    return `
+
+                        <div class="cart-item">
+
+                            <div>
+
+                                <strong>
+                                    ${food.name}
+                                </strong>
+
+                                <br>
+
+                                ₹${food.price * cart[id]}
+
+                            </div>
+
+
+                            <div class="quantity">
+
+                                <button
+                                    onclick="changeQuantity(${id}, -1)">
+                                    −
+                                </button>
+
+                                <span>
+                                    ${cart[id]}
+                                </span>
+
+                                <button
+                                    onclick="changeQuantity(${id}, 1)">
+                                    +
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }).join("");
+
+            }
+
+
+
+            /* ===================================
+               CALCULATE TOTAL ITEMS
+            =================================== */
+
+            let itemCount = 0;
+
+            for (let id in cart) {
+
+                itemCount += cart[id];
+
+            }
+
+
+
+            /* ===================================
+               CALCULATE TOTAL PRICE
+            =================================== */
+
+            let total = 0;
+
+            for (let id in cart) {
+
+                const food =
+                    foods.find(function(item) {
+
+                        return item.id == id;
+
+                    });
+
+                total += food.price * cart[id];
+
+            }
+
+
+
+            /* Update webpage */
+
+            document.getElementById("cartCount")
+                .textContent = itemCount;
+
+            document.getElementById("total")
+                .textContent = total;
+
+        }
+
+
+
+        /* ===================================
+           FILTER CATEGORIES
+        =================================== */
+
+        function filterFood(category, button) {
+
+            /*
+                Remove "active" from all buttons
+            */
+
+            const buttons =
+                document.querySelectorAll(".category-button");
+
+            buttons.forEach(function(btn) {
+
+                btn.classList.remove("active");
+
+            });
+
+
+            /*
+                Add active to clicked button
+            */
+
+            button.classList.add("active");
+
+
+            /*
+                Render selected category
+            */
+
+            renderMenu(category);
+
+        }
+
+
+
+        /* ===================================
+           OPEN / CLOSE CART
+        =================================== */
+
+        function toggleCart() {
+
+            const cartElement =
+                document.getElementById("cart");
+
+            cartElement.classList.toggle("open");
+
+        }
+
+
+
+        /* ===================================
+           CHECKOUT
+        =================================== */
+
+        function checkout() {
+
+            const itemCount =
+                Object.keys(cart).length;
+
+
+            if (itemCount === 0) {
+
+                alert("Your cart is empty!");
+
+                return;
+
+            }
+
+
+            alert("Order placed successfully!");
+
+
+            /* Empty cart after checkout */
+
+            cart = {};
+
+            updateCart();
+
+        }
+
+
+
+        /* ===================================
+           INITIAL LOAD
+        =================================== */
+
+        renderMenu();
+
+        updateCart();
+
+    </script>
+
+</body>
+</html>
